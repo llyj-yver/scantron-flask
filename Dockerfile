@@ -11,10 +11,14 @@ ENV PYTHONUNBUFFERED=1 \
     OMP_NUM_THREADS=2 \
     MKL_NUM_THREADS=2
 
-# Install ONLY essential system dependencies
+# Install system dependencies for OpenCV
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
+    libgl1-mesa-glx \
     libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
     libgomp1 \
     && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -33,7 +37,7 @@ RUN mkdir -p uploads results
 # Expose port
 EXPOSE 5000
 
-# Start application with CORRECT Gunicorn arguments
+# Start application with Gunicorn
 CMD ["gunicorn", "app:app", \
      "--bind", "0.0.0.0:5000", \
      "--workers", "1", \
