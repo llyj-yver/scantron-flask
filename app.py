@@ -265,8 +265,8 @@ def process_single_image(input_path, filename, host_url):
         detections_sorted = sorted(detections, key=lambda d: d["center"][0])
 
         # Map y-coordinate to letters with adaptive tolerance
-        letter_positions = {'A': 58, 'B': 90, 'C': 117, 'D': 148, 'E': 170}
-        tolerance = max(12, int(img_height * 0.08))
+        letter_positions = {'A': 43, 'B': 64, 'C': 88, 'D': 108, 'E': 170}
+        tolerance = max(10, int(img_height * 0.08))
         
         answers = []
         detection_info = []
@@ -342,32 +342,33 @@ def process_single_image(input_path, filename, host_url):
             letter = answers[i]
             conf = d["confidence"]
             
-            # Color by confidence
+            # Color by confidence - bright, easy to see colors
             if conf > 0.7:
-                box_color = (0, 255, 0)
+                box_color = (0, 255, 0)      # Bright green
             elif conf > 0.4:
-                box_color = (0, 255, 255)
+                box_color = (255, 255, 0)    # Bright yellow (cyan in BGR)
             else:
-                box_color = (0, 165, 255)
+                box_color = (255, 0, 255)    # Bright magenta
             
-            # Bounding box
-            cv2.rectangle(img_viz, (x1, y1), (x2, y2), box_color, 2)
+            # Thinner bounding box (1 pixel)
+            cv2.rectangle(img_viz, (x1, y1), (x2, y2), box_color, 1)
             
-            # Center point
-            cv2.circle(img_viz, (cx, cy), 4, (255, 50, 50), -1)
+            # Smaller center point
+            cv2.circle(img_viz, (cx, cy), 3, (255, 0, 0), -1)
             
-            # Label with background
-            label = f"{letter} ({conf:.2f})"
-            label_size = cv2.getTextSize(label, font, 0.5, 1)[0]
-            cv2.rectangle(img_viz, (x1 - 5, y1 - 20), 
-                         (x1 + label_size[0] + 5, y1), box_color, -1)
-            cv2.putText(img_viz, label, (x1, y1 - 5), font, 0.5, 
-                       (0, 0, 0), 1, cv2.LINE_AA)
-            
-            # Coordinates
+            # Coordinates only with cleaner background
             coord_text = f"({cx},{cy})"
-            cv2.putText(img_viz, coord_text, (cx - 30, cy - 10), font, 0.35, 
-                       (50, 150, 255), 1, cv2.LINE_AA)
+            text_size = cv2.getTextSize(coord_text, font, 0.4, 1)[0]
+            
+            # Semi-transparent white background for better readability
+            overlay_bg = img_viz.copy()
+            cv2.rectangle(overlay_bg, (cx - text_size[0]//2 - 3, cy - text_size[1] - 15), 
+                         (cx + text_size[0]//2 + 3, cy - 10), (255, 255, 255), -1)
+            img_viz = cv2.addWeighted(overlay_bg, 0.7, img_viz, 0.3, 0)
+            
+            # Coordinates text in black
+            cv2.putText(img_viz, coord_text, (cx - text_size[0]//2, cy - 12), font, 0.4, 
+                       (0, 0, 0), 1, cv2.LINE_AA)
 
         # Save with compression
         result_filename = f"result_{filename}"
