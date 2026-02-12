@@ -265,9 +265,9 @@ def detect_single():
                 cx = int((x1 + x2) / 2)
                 cy = int((y1 + y2) / 2)
                 detections.append({
-                    "center": (cx, cy),
-                    "bbox": (x1, y1, x2, y2),
-                    "confidence": float(conf)
+                    "center": (int(cx), int(cy)),  # Convert to int
+                    "bbox": (int(x1), int(y1), int(x2), int(y2)),  # Convert to int
+                    "confidence": float(conf)  # Convert to float
                 })
 
         # Sort left → right
@@ -289,15 +289,15 @@ def detect_single():
             answers.append(letter)
             detection_info.append({
                 "letter": letter,
-                "center_x": cx,
-                "center_y": cy,
+                "center_x": int(cx),  # Explicitly convert to Python int
+                "center_y": int(cy),  # Explicitly convert to Python int
                 "bbox": {
-                    "x1": d["bbox"][0],
-                    "y1": d["bbox"][1],
-                    "x2": d["bbox"][2],
-                    "y2": d["bbox"][3]
+                    "x1": int(d["bbox"][0]),  # Convert to Python int
+                    "y1": int(d["bbox"][1]),
+                    "x2": int(d["bbox"][2]),
+                    "y2": int(d["bbox"][3])
                 },
-                "confidence": d["confidence"]
+                "confidence": float(d["confidence"])  # Convert to Python float
             })
 
         # Reverse order to match left → right
@@ -343,8 +343,8 @@ def detect_single():
             "detections": detection_info_reversed,
             "image_url": image_url,
             "image_dimensions": {
-                "width": img_width,
-                "height": img_height
+                "width": int(img_width),  # Convert to Python int
+                "height": int(img_height)  # Convert to Python int
             }
         }
 
