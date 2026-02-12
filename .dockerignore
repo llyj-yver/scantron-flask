@@ -1,8 +1,55 @@
-__pycache__/
-*.pyc
-.git/
+# Git
+.git
 .gitignore
-.env
-uploads/
-results/
+.gitattributes
 
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+uploads/*
+results/*
+*.tmp
+*.log
+
+# Documentation
+README.md
+*.md
+docs/
+
+# Tests
+tests/
+test_*.py
+*_test.py
+
+# Cache
+.cache/
+.pytest_cache/
+
+# Don't ignore the model file!
+!best.pt

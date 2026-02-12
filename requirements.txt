@@ -1,8 +1,25 @@
+# Core web framework
 flask==3.0.0
 gunicorn==21.2.0
-ultralytics==8.0.200
+werkzeug==3.0.1
+
+# YOLO and Computer Vision
+# Using specific ultralytics version that's more stable
+ultralytics==8.1.0
 opencv-python-headless==4.8.1.78
+
+# PyTorch - CPU only (smaller and faster for Render)
+# Using --extra-index-url for CPU-specific builds
 torch==2.1.0
 torchvision==0.16.0
+
+# Core ML/Data dependencies
 numpy==1.24.3
 pillow==10.1.0
+
+# Utilities
+psutil==5.9.6
+pyyaml==6.0.1
+
+# Optional: For better performance monitoring
+# py-cpuinfo==9.0.0
