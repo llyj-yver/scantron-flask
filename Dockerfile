@@ -9,29 +9,29 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    # PyTorch/YOLO optimizations
     OMP_NUM_THREADS=2 \
     MKL_NUM_THREADS=2 \
     PYTORCH_ENABLE_MPS_FALLBACK=1 \
-    # Reduce YOLO verbosity
     YOLO_VERBOSE=False
 
-# Install system dependencies (minimal set for OpenCV headless)
+# Install system dependencies for OpenCV
+# Fixed: Using correct package names for Debian/Ubuntu
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libgl1-mesa-glx \
     libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
     libgomp1 \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean
+    libgl1 \
+    libglib2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first for better caching
 COPY requirements.txt .
 
-# Install Python dependencies with optimizations
+# Install Python dependencies
 RUN pip install --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    # Clean up pip cache
-    rm -rf /root/.cache/pip
+    pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY . .
@@ -42,10 +42,6 @@ RUN mkdir -p uploads results && \
 
 # Expose port
 EXPOSE 5000
-
-# Health check (optional but recommended for Render)
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:5000/test', timeout=5)"
 
 # Start with optimized Gunicorn settings for Render free tier
 CMD ["gunicorn", "app:app", \
@@ -60,5 +56,4 @@ CMD ["gunicorn", "app:app", \
      "--worker-tmp-dir", "/dev/shm", \
      "--log-level", "info", \
      "--access-logfile", "-", \
-     "--error-logfile", "-", \
-     "--capture-output"]
+     "--error-logfile", "-"]
