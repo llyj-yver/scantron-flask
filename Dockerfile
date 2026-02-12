@@ -21,5 +21,15 @@ COPY . .
 # Expose port for Render
 EXPOSE 5000
 
-# Start app with Gunicorn (1 worker for Free Tier)
-CMD ["gunicorn", "app:app", "-b", "0.0.0.0:5000", "--workers", "1"]
+# Start app with Gunicorn optimized for free tier (512MB RAM)
+# --workers 1: Single worker to minimize memory usage
+# --timeout 120: Allow 2 minutes for YOLO processing
+# --max-requests 10: Restart worker after 10 requests to prevent memory leaks
+# --worker-tmp-dir /dev/shm: Use RAM for worker heartbeat files
+CMD ["gunicorn", "app:app", \
+     "-b", "0.0.0.0:5000", \
+     "--workers", "1", \
+     "--timeout", "120", \
+     "--max-requests", "10", \
+     "--max-requests-jitter", "5", \
+     "--worker-tmp-dir", "/dev/shm"]
