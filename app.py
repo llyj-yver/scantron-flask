@@ -265,8 +265,8 @@ def process_single_image(input_path, filename, host_url):
         detections_sorted = sorted(detections, key=lambda d: d["center"][0])
 
         # Map y-coordinate to letters with adaptive tolerance
-        letter_positions = {'A': 46, 'B': 69, 'C': 94, 'D': 119, 'E': 145}
-        tolerance = min(12, max(8, int(img_height * 0.05)))
+        letter_positions = {'A': 44, 'B': 69, 'C': 94, 'D': 119, 'E': 145}
+        tolerance = min(14, max(8, int(img_height * 0.05)))
         
         answers = []
         detection_info = []
